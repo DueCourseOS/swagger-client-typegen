@@ -40,6 +40,20 @@ export interface NamedTypeInfo {
 
 export type TypeInfo = PrimitiveTypeInfo | FunctionTypeInfo | ComplexTypeInfo | ArrayTypeInfo | UnionTypeInfo | LiteralTypeInfo | ConcreteGenericTypeInfo | NamedTypeInfo;
 
+export interface InterfaceInfo {
+	statement: 'interface';
+	name: string;
+	definition: ComplexTypeInfo;
+	export?: boolean;
+}
+export interface TypeDefInfo {
+	statement: 'typedef';
+	name: string;
+	definition: TypeInfo;
+	export?: boolean;
+}
+export type TypeStatement = InterfaceInfo | TypeDefInfo;
+
 export interface Operation {
 	operationId: string;
 	method: string;

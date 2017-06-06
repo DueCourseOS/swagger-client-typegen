@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import * as codeGen from '../src/codeGeneration';
-import {TypeInfo, PrimitiveTypeInfo, ComplexTypeInfo, ArrayTypeInfo, UnionTypeInfo, LiteralTypeInfo, ConcreteGenericTypeInfo, FunctionTypeInfo} from '../src/intermediaryRepresentation';
+import {TypeInfo, PrimitiveTypeInfo, ComplexTypeInfo, ArrayTypeInfo, UnionTypeInfo, LiteralTypeInfo, ConcreteGenericTypeInfo, FunctionTypeInfo, TypeDefInfo, InterfaceInfo} from '../src/intermediaryRepresentation';
 import {readFileSync} from 'fs';
 
 function loadFixture(name){
@@ -88,7 +88,6 @@ describe('code Generation', () => {
 }>`;
 			expect(codeGen.renderType(concrete, options)).to.equal(expectedCode);
 		});
-	});
 
 	it('should render function types', () => {
       const parameterA:TypeInfo = {type: 'string'};
@@ -103,4 +102,25 @@ describe('code Generation', () => {
 `(a: string, b: number) => Promise<number>`;
 			expect(codeGen.renderType(func, options)).to.equal(expectedCode);
 		});
+	});
+
+	describe('type statement rendering', () => {
+		it('should render type defs', () => {
+			const target:TypeInfo = {type: 'number'};
+			const typeDef:TypeDefInfo = {statement: 'typedef', name: 'Numberish', definition: target, export: true};
+			const expectedCode = 'export type Numberish = number;'
+			expect(codeGen.renderStatement(typeDef, options)).to.equal(expectedCode);
+		});
+
+		it('should render interfaces', () => {
+			const target: TypeInfo = {type: 'object', children: {n: {type: 'number'}}};
+			const interfaceDef: InterfaceInfo = {statement: 'interface', name: 'SpuriousInterface', definition: target, export: true};
+			const expectedCode =
+`export interface SpuriousInterface {
+	n: number;
+}`
+			expect(codeGen.renderStatement(interfaceDef, options)).to.equal(expectedCode);
+		});
+
+	});
 });

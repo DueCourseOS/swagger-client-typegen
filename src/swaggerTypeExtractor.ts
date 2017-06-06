@@ -1,8 +1,12 @@
 import * as _ from 'lodash';
-import {TypeInfo, UnionTypeInfo, Operation} from './intermediaryRepresentation';
+import {TypeInfo, UnionTypeInfo, Operation, TypeStatement, ComplexTypeInfo} from './intermediaryRepresentation';
 // Extract Types //////////////////////////////////////////////////
 function flatten(listOfLists){
 	return listOfLists.reduce((acc, list) => acc.concat(list), []);
+}
+
+function promiseTypeOf(type:TypeInfo){
+	return {type: 'concrete', genericTypeName: 'Promise', parameters: [type]};
 }
 
 export function extractOperationsFromClient(client: any): Operation[]{
@@ -38,6 +42,44 @@ function extractRequestAndResponseTypes(operation): {requestType: TypeInfo, resp
 	const requestType: TypeInfo = {type: 'object', children: requestTypeChildren};
 
 	return {requestType, responseType};
+}
+
+export function buildStatementsForClient(client: any, interfaceName): TypeStatement[][] {
+	const operations = extractOperationsFromClient(client);
+	const dtoTypes:TypeStatement[][] = _.map(operations, (operation: Operation) => {
+		return [
+			{statement: 'typedef', name: operation.operationId + 'Request', definition: operation.types.requestType},
+			{statement: 'typedef', name: operation.operationId + 'Response', definition: operation.types.responseType}
+		] as TypeStatement[];
+	});
+
+	const byTag = _.groupBy(operations, operation => operation.tags[0]);
+	const apis = _.mapValues(byTag, oppsGroup => {
+		const methods = _(oppsGroup)
+		.keyBy((op: any) => op.operationId)
+		.mapValues((operation, operationId) => {
+			const responseType:TypeInfo = {type: 'named', typeName: operationId + 'Response'};
+			const paramType:TypeInfo = {type: 'named', typeName: operationId + 'Request'};
+			return {
+				type: 'function',
+				parameters: [{name: 'params', type: paramType}],
+				resultType: promiseTypeOf(responseType)
+			};
+		}).value();
+		return {type: 'object', children: methods} as TypeInfo;
+	});
+
+	const clientInterfaceType:ComplexTypeInfo = {
+		type: 'object',
+		children: {
+			apis: {
+				type: 'object', children: apis
+			}
+	}};
+	const clientInterface:TypeStatement = {statement: 'interface', name: interfaceName, definition: clientInterfaceType};
+	const clientInterfaceStatements = [[clientInterface]];
+
+	return dtoTypes.concat(clientInterfaceStatements);
 }
 
 function schemaToTypeInfo(schema): TypeInfo{

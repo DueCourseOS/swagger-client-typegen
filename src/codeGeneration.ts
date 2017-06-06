@@ -1,8 +1,24 @@
 import * as _ from 'lodash';
-import {TypeInfo, UnionTypeInfo, Operation} from './intermediaryRepresentation';
+import {TypeInfo, UnionTypeInfo, Operation, TypeStatement} from './intermediaryRepresentation';
 
 function promiseTypeOf(type:TypeInfo){
 	return {type: 'concrete', genericTypeName: 'Promise', parameters: [type]};
+}
+
+export function renderStatement(statement:TypeStatement): string {
+	const options = {indentCharacter: '\t'}
+	const prefix = statement.export ? 'export ' : '';
+	if(statement.statement === 'typedef'){
+		return `${prefix}type ${statement.name} = ${renderType(statement.definition, options)};`
+	}
+	if(statement.statement === 'interface'){
+		return `${prefix}interface ${statement.name} ${renderType(statement.definition, options)}`
+	}
+	return '';
+}
+
+export function renderStatementsByGroup(statementGroups:TypeStatement[][]): string {
+	return statementGroups.map(statements => statements.map(renderStatement).join('\n')+'\n').join('\n');
 }
 
 export function generateInterfaceForClient(name, operations: Operation[]): string {
