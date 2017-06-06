@@ -32,8 +32,13 @@ export interface ConcreteGenericTypeInfo {
 	parameters: TypeInfo[];
 	isOptional?: boolean;
 }
+export interface NamedTypeInfo {
+	type: 'named';
+	typeName: string;
+	isOptional?: boolean;
+}
 
-export type TypeInfo = PrimitiveTypeInfo | FunctionTypeInfo | ComplexTypeInfo | ArrayTypeInfo | UnionTypeInfo | LiteralTypeInfo | ConcreteGenericTypeInfo;
+export type TypeInfo = PrimitiveTypeInfo | FunctionTypeInfo | ComplexTypeInfo | ArrayTypeInfo | UnionTypeInfo | LiteralTypeInfo | ConcreteGenericTypeInfo | NamedTypeInfo;
 
 export interface Operation {
 	operationId: string;

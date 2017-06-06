@@ -33,7 +33,6 @@ function extractRequestAndResponseTypes(operation): {requestType: TypeInfo, resp
 		return {type: 'object', children: {body, statusCode: {type: 'literal', value: parseInt(statusCode, 10)}}} as TypeInfo;
 	}).value();
 
-
 	const responseType: TypeInfo = responses.length > 1 ? {type: 'union', parts: responses} : responses[0];
 
 	const requestType: TypeInfo = {type: 'object', children: requestTypeChildren};

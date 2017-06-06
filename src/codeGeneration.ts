@@ -1,16 +1,22 @@
 import * as _ from 'lodash';
 import {TypeInfo, UnionTypeInfo, Operation} from './intermediaryRepresentation';
 
+function promiseTypeOf(type:TypeInfo){
+	return {type: 'concrete', genericTypeName: 'Promise', parameters: [type]};
+}
+
 export function generateInterfaceForClient(name, operations: Operation[]): string {
 	const byTag = _.groupBy(operations, operation => operation.tags[0]);
 	const apis = _.mapValues(byTag, oppsGroup => {
 		const methods = _(oppsGroup)
 		.keyBy((op: any) => op.operationId)
 		.mapValues((operation, operationId) => {
+			const responseType:TypeInfo = {type: 'named', typeName: operationId + 'Response'};
+			const paramType:TypeInfo = {type: 'named', typeName: operationId + 'Request'};
 			return {
 				type: 'function',
-				parameters: [{name: 'params', type: operationId + 'Request'}],
-				resultType: `${operationId}Response`
+				parameters: [{name: 'params', type: paramType}],
+				resultType: promiseTypeOf(responseType)
 			};
 		}).value();
 		return {type: 'object', children: methods};
@@ -58,6 +64,9 @@ export function renderType(node: TypeInfo, options, depth = 1): string {
 			return `(${paramList}) => ${renderType(node.resultType, options, depth)}`;
 		}
 		if (node.type === 'union'){
+			if(node.parts.length === 1){
+				return renderType(node.parts[1], options, depth);
+			}
 			return node.parts.map(part => renderType(part, options, depth + 1)).join(' | ');
 		}
 		if (node.type === 'array'){
@@ -72,6 +81,9 @@ export function renderType(node: TypeInfo, options, depth = 1): string {
 		if (node.type === 'concrete'){
 			const parameters = node.parameters.map(parameter => renderType(parameter, options, depth));
 			return `${node.genericTypeName}<${parameters.join(', ')}>`;
+		}
+		if (node.type === 'named'){
+			return node.typeName;
 		}
 
 		return node.type;
