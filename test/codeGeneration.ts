@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import * as codeGen from '../src/codeGeneration';
-import {TypeInfo, PrimitiveTypeInfo, ComplexTypeInfo, ArrayTypeInfo, UnionTypeInfo, LiteralTypeInfo, ConcreteGenericTypeInfo} from '../src/intermediaryRepresentation';
+import {TypeInfo, PrimitiveTypeInfo, ComplexTypeInfo, ArrayTypeInfo, UnionTypeInfo, LiteralTypeInfo, ConcreteGenericTypeInfo, FunctionTypeInfo} from '../src/intermediaryRepresentation';
 import {readFileSync} from 'fs';
 
 function loadFixture(name){
@@ -89,4 +89,18 @@ describe('code Generation', () => {
 			expect(codeGen.renderType(concrete, options)).to.equal(expectedCode);
 		});
 	});
+
+	it('should render function types', () => {
+      const parameterA:TypeInfo = {type: 'string'};
+      const parameterB:TypeInfo = {type: 'number'};
+			const result:TypeInfo = {type: 'concrete', genericTypeName: 'Promise', parameters: [{type: 'number'}]}
+			const func : FunctionTypeInfo = {
+				type: 'function',
+				parameters: [{name: 'a', type: parameterA}, {name: 'b', type: parameterB}],
+				resultType: result
+			};
+			const expectedCode =
+`(a: string, b: number) => Promise<number>`;
+			expect(codeGen.renderType(func, options)).to.equal(expectedCode);
+		});
 });

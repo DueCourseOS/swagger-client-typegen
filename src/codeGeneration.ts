@@ -54,8 +54,8 @@ export function renderType(node: TypeInfo, options, depth = 1): string {
 			return ['{', ...inner.map(line => indent + line), trailingIndent + '}'].join('\n');
 		}
 		if (node.type === 'function'){
-			const paramList = node.parameters.map(param => `${param.name}: ${param.type}`).join(', ');
-			return `(${paramList}) => ${node.resultType}`;
+			const paramList = node.parameters.map(param => `${param.name}: ${renderType(param.type, options, depth)}`).join(', ');
+			return `(${paramList}) => ${renderType(node.resultType, options, depth)}`;
 		}
 		if (node.type === 'union'){
 			return node.parts.map(part => renderType(part, options, depth + 1)).join(' | ');

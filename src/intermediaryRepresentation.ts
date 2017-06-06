@@ -1,4 +1,11 @@
-export type PrimitiveTypeInfo = ({type: 'string'} | {type: 'number'} | {type: 'Promise<any>'} | {type: 'function', parameters: Array<{name: string, type: TypeInfo}>, resultType: TypeInfo}) & {isOptional?: boolean};
+export type PrimitiveTypeInfo = ({type: 'string'} | {type: 'number'} | {type: 'Promise<any>'}) & {isOptional?: boolean};
+
+export interface FunctionTypeInfo {
+	type: 'function',
+	parameters: Array<{name: string, type: TypeInfo}>,
+	resultType: TypeInfo
+	isOptional?: boolean;
+}
 export interface ComplexTypeInfo {
 	type: 'object';
 	children: { [name: string]: TypeInfo };
@@ -26,7 +33,7 @@ export interface ConcreteGenericTypeInfo {
 	isOptional?: boolean;
 }
 
-export type TypeInfo = PrimitiveTypeInfo | ComplexTypeInfo | ArrayTypeInfo | UnionTypeInfo | LiteralTypeInfo | ConcreteGenericTypeInfo;
+export type TypeInfo = PrimitiveTypeInfo | FunctionTypeInfo | ComplexTypeInfo | ArrayTypeInfo | UnionTypeInfo | LiteralTypeInfo | ConcreteGenericTypeInfo;
 
 export interface Operation {
 	operationId: string;
