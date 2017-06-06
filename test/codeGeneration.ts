@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import * as codeGen from '../src/codeGeneration';
-import {PrimitiveTypeInfo, ComplexTypeInfo, ArrayTypeInfo, UnionTypeInfo, LiteralTypeInfo} from '../src/intermediaryRepresentation';
+import {TypeInfo, PrimitiveTypeInfo, ComplexTypeInfo, ArrayTypeInfo, UnionTypeInfo, LiteralTypeInfo, ConcreteGenericTypeInfo} from '../src/intermediaryRepresentation';
 import {readFileSync} from 'fs';
 
 function loadFixture(name){
@@ -70,6 +70,23 @@ describe('code Generation', () => {
 			const expectedCode =
 `'foo'`;
 			expect(codeGen.renderType(literal, options)).to.equal(expectedCode);
+		});
+
+	it('should render concrete instantiations of generic types', () => {
+      const paramterType: TypeInfo = {
+				type: 'object',
+				children: {somestring: {type: 'string'}}
+			};
+			const concrete : ConcreteGenericTypeInfo = {
+				type: 'concrete',
+				genericTypeName: 'Promise',
+				parameters: [paramterType]
+			};
+			const expectedCode =
+`Promise<{
+	somestring: string;
+}>`;
+			expect(codeGen.renderType(concrete, options)).to.equal(expectedCode);
 		});
 	});
 });

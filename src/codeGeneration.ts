@@ -31,7 +31,6 @@ function renderInterfacesForOperation(operation: Operation): string{
 	const {requestType, responseType} = operation.types;
 	const requestInterfaceCode = generateInterface(requestType, operation.operationId + 'Request', options);
 	const responseInterfaceCode = generateInterface(responseType, operation.operationId + 'Response', options);
-	// const responseInterfaceCode = `type ${operation.operationId}Response = Promise<any>;`;
 	return requestInterfaceCode + '\n' + responseInterfaceCode + '\n\n';
 }
 
@@ -40,7 +39,6 @@ export function renderTypeDefsForOperation(operation: Operation): string{
 		const {requestType, responseType} = operation.types;
 		const requestInterfaceCode = renderTypeDef(requestType, operation.operationId + 'Request', options);
 		const responseInterfaceCode = renderTypeDef(responseType, operation.operationId + 'Response', options);
-		// const responseInterfaceCode = `type ${operation.operationId}Response = Promise<any>;`;
 		return 'export ' + requestInterfaceCode + '\n' + 'export ' + responseInterfaceCode + '\n\n';
 	}
 
@@ -70,6 +68,10 @@ export function renderType(node: TypeInfo, options, depth = 1): string {
 				return `'${node.value}'`;
 			}
 			return node.value;
+		}
+		if (node.type === 'concrete'){
+			const parameters = node.parameters.map(parameter => renderType(parameter, options, depth));
+			return `${node.genericTypeName}<${parameters.join(', ')}>`;
 		}
 
 		return node.type;

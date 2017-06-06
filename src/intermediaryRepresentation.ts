@@ -19,8 +19,14 @@ export interface LiteralTypeInfo {
 	value: any;
 	isOptional?: boolean;
 }
+export interface ConcreteGenericTypeInfo {
+	type: 'concrete';
+	genericTypeName: string;
+	parameters: TypeInfo[];
+	isOptional?: boolean;
+}
 
-export type TypeInfo = PrimitiveTypeInfo | ComplexTypeInfo | ArrayTypeInfo | UnionTypeInfo | LiteralTypeInfo;
+export type TypeInfo = PrimitiveTypeInfo | ComplexTypeInfo | ArrayTypeInfo | UnionTypeInfo | LiteralTypeInfo | ConcreteGenericTypeInfo;
 
 export interface Operation {
 	operationId: string;
