@@ -1,0 +1,35 @@
+{
+  "swagger": "2.0",
+  "host": "example.com",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "info": {
+    "title": "example service",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/simple": {
+      "get": {
+        "summary": "simple endpoint",
+        "operationId": "getHealthcheck",
+        "tags": [
+          "tagA"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+
+  }
+}

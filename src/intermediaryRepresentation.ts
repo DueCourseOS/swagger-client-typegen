@@ -25,7 +25,7 @@ export type TypeInfo = PrimitiveTypeInfo | ComplexTypeInfo | ArrayTypeInfo | Uni
 export interface Operation {
 	operationId: string;
 	method: string;
-	processedParams: {
+	types: {
 		requestType: TypeInfo;
 		responseType: TypeInfo;
 	};

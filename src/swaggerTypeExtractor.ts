@@ -10,7 +10,7 @@ export function extractOperationsFromClient(client: any): Operation[]{
 	const operationSpecs = Object.keys(paths).map(url => {
 		const path = paths[url];
 		const operations = Object.keys(path).map(method => {
-			return {...path[method], method, url, processedParams: extractRequestAndResponseTypes(path[method])};
+			return {...path[method], method, url, types: extractRequestAndResponseTypes(path[method])};
 		});
 		return operations;
 	}, {});
@@ -33,7 +33,8 @@ function extractRequestAndResponseTypes(operation): {requestType: TypeInfo, resp
 		return {type: 'object', children: {body, statusCode: {type: 'literal', value: parseInt(statusCode, 10)}}} as TypeInfo;
 	}).value();
 
-	const responseType: UnionTypeInfo = {type: 'union', parts: responses};
+
+	const responseType: TypeInfo = responses.length > 1 ? {type: 'union', parts: responses} : responses[0];
 
 	const requestType: TypeInfo = {type: 'object', children: requestTypeChildren};
 

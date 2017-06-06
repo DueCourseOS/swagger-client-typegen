@@ -28,7 +28,7 @@ export function generateInterfaceForClient(name, operations: Operation[]): strin
 
 function renderInterfacesForOperation(operation: Operation): string{
 	const options = {indentCharacter: '\t'};
-	const {requestType, responseType} = operation.processedParams;
+	const {requestType, responseType} = operation.types;
 	const requestInterfaceCode = generateInterface(requestType, operation.operationId + 'Request', options);
 	const responseInterfaceCode = generateInterface(responseType, operation.operationId + 'Response', options);
 	// const responseInterfaceCode = `type ${operation.operationId}Response = Promise<any>;`;
@@ -37,7 +37,7 @@ function renderInterfacesForOperation(operation: Operation): string{
 
 export function renderTypeDefsForOperation(operation: Operation): string{
 		const options = {indentCharacter: '\t'};
-		const {requestType, responseType} = operation.processedParams;
+		const {requestType, responseType} = operation.types;
 		const requestInterfaceCode = renderTypeDef(requestType, operation.operationId + 'Request', options);
 		const responseInterfaceCode = renderTypeDef(responseType, operation.operationId + 'Response', options);
 		// const responseInterfaceCode = `type ${operation.operationId}Response = Promise<any>;`;
@@ -45,7 +45,7 @@ export function renderTypeDefsForOperation(operation: Operation): string{
 	}
 
 
-function renderType(node: TypeInfo, options, depth = 1): string {
+export function renderType(node: TypeInfo, options, depth = 1): string {
 		if (node.type === 'object'){
 			const children = Object.keys(node.children).map(key => {
 				return {key, ...node.children[key]};
@@ -63,7 +63,7 @@ function renderType(node: TypeInfo, options, depth = 1): string {
 			return node.parts.map(part => renderType(part, options, depth + 1)).join(' | ');
 		}
 		if (node.type === 'array'){
-			return `Array<${renderType(node.itemType, options, depth + 1)}>`;
+			return `Array<${renderType(node.itemType, options, depth)}>`;
 		}
 		if (node.type === 'literal'){
 			if (_.isString(node.value)){
