@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {TypeInfo, UnionTypeInfo, Operation, TypeStatement, ComplexTypeInfo} from './intermediaryRepresentation';
+import {TypeInfo, UnionTypeInfo, Operation, TypeStatement, ComplexTypeInfo} from './intermediateRepresentation';
 // Extract Types //////////////////////////////////////////////////
 function flatten(listOfLists){
 	return listOfLists.reduce((acc, list) => acc.concat(list), []);
@@ -9,7 +9,7 @@ function promiseTypeOf(type:TypeInfo){
 	return {type: 'concrete', genericTypeName: 'Promise', parameters: [type]};
 }
 
-export function extractOperationsFromClient(client: any): Operation[]{
+ function extractOperationsFromClient(client: any): Operation[]{
 	const paths = client.spec.paths;
 	const operationSpecs = Object.keys(paths).map(url => {
 		const path = paths[url];

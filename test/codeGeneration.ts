@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import * as codeGen from '../src/codeGeneration';
-import {TypeInfo, PrimitiveTypeInfo, ComplexTypeInfo, ArrayTypeInfo, UnionTypeInfo, LiteralTypeInfo, ConcreteGenericTypeInfo, FunctionTypeInfo, TypeDefInfo, InterfaceInfo} from '../src/intermediaryRepresentation';
+import {TypeInfo, PrimitiveTypeInfo, ComplexTypeInfo, ArrayTypeInfo, UnionTypeInfo, LiteralTypeInfo, ConcreteGenericTypeInfo, FunctionTypeInfo, TypeDefInfo, InterfaceInfo} from '../src/intermediateRepresentation';
 import {readFileSync} from 'fs';
 
 function loadFixture(name){

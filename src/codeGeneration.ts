@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {TypeInfo, UnionTypeInfo, Operation, TypeStatement} from './intermediaryRepresentation';
+import {TypeInfo, UnionTypeInfo, Operation, TypeStatement} from './intermediateRepresentation';
 
 export function renderStatement(statement:TypeStatement): string {
 	const options = {indentCharacter: '\t'}
