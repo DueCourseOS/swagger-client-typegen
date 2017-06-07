@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import * as swagger from 'swagger-client';
 import {buildStatementsForClient} from '../src/swaggerTypeExtractor';
-import {TypeStatement} from '../src/intermediateRepresentation';
+import {TypeStatement} from 'lib-typegen/src/intermediateRepresentation';
 import {readFileSync} from 'fs';
 import {flatten} from 'lodash';
 

@@ -1,5 +1,5 @@
 {
-  "name": "swagger-typewriter",
+  "name": "swagger-client-typegen",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -25,6 +25,7 @@
     "@types/lodash": "^4.14.65",
     "@types/node": "^7.0.27",
     "get-stdin": "^5.0.1",
+    "lib-typegen": "^1.0.0",
     "lodash": "^4.17.4",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",

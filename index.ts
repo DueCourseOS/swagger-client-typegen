@@ -1,7 +1,7 @@
 import * as getStdIn from 'get-stdin';
 import * as swagger from 'swagger-client';
+import {codeGeneration} from 'lib-typegen';
 import {buildStatementsForClient} from './src/swaggerTypeExtractor';
-import * as codeGeneration from './src/codeGeneration';
 
 const interfaceName = process.argv[2];
 

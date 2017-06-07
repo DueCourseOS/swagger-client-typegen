@@ -1,8 +1,14 @@
 import * as _ from 'lodash';
-import {TypeInfo, UnionTypeInfo, Operation, TypeStatement, ComplexTypeInfo} from './intermediateRepresentation';
-// Extract Types //////////////////////////////////////////////////
-function flatten(listOfLists){
-	return listOfLists.reduce((acc, list) => acc.concat(list), []);
+import {TypeInfo, UnionTypeInfo, TypeStatement, ComplexTypeInfo} from 'lib-typegen/src/intermediateRepresentation';
+
+interface Operation {
+	operationId: string;
+	method: string;
+	types: {
+		requestType: TypeInfo;
+		responseType: TypeInfo;
+	};
+	tags: string[];
 }
 
 function promiseTypeOf(type:TypeInfo){
@@ -18,7 +24,7 @@ function promiseTypeOf(type:TypeInfo){
 		});
 		return operations;
 	}, {});
-	return flatten(operationSpecs);
+	return _.flatten(operationSpecs);
 }
 
 function isSuccessResponse(value, statusCode){
