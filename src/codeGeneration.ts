@@ -1,10 +1,6 @@
 import * as _ from 'lodash';
 import {TypeInfo, UnionTypeInfo, Operation, TypeStatement} from './intermediaryRepresentation';
 
-function promiseTypeOf(type:TypeInfo){
-	return {type: 'concrete', genericTypeName: 'Promise', parameters: [type]};
-}
-
 export function renderStatement(statement:TypeStatement): string {
 	const options = {indentCharacter: '\t'}
 	const prefix = statement.export ? 'export ' : '';
@@ -20,50 +16,6 @@ export function renderStatement(statement:TypeStatement): string {
 export function renderStatementsByGroup(statementGroups:TypeStatement[][]): string {
 	return statementGroups.map(statements => statements.map(renderStatement).join('\n')+'\n').join('\n');
 }
-
-export function generateInterfaceForClient(name, operations: Operation[]): string {
-	const byTag = _.groupBy(operations, operation => operation.tags[0]);
-	const apis = _.mapValues(byTag, oppsGroup => {
-		const methods = _(oppsGroup)
-		.keyBy((op: any) => op.operationId)
-		.mapValues((operation, operationId) => {
-			const responseType:TypeInfo = {type: 'named', typeName: operationId + 'Response'};
-			const paramType:TypeInfo = {type: 'named', typeName: operationId + 'Request'};
-			return {
-				type: 'function',
-				parameters: [{name: 'params', type: paramType}],
-				resultType: promiseTypeOf(responseType)
-			};
-		}).value();
-		return {type: 'object', children: methods};
-	});
-
-	const clientInterfaceType = {
-		type: 'object',
-		children: {
-			apis: {
-				type: 'object', children: apis
-			}
-		}};
-	return 'export ' + generateInterface(clientInterfaceType, name, {indentCharacter: '\t'});
-	}
-
-function renderInterfacesForOperation(operation: Operation): string{
-	const options = {indentCharacter: '\t'};
-	const {requestType, responseType} = operation.types;
-	const requestInterfaceCode = generateInterface(requestType, operation.operationId + 'Request', options);
-	const responseInterfaceCode = generateInterface(responseType, operation.operationId + 'Response', options);
-	return requestInterfaceCode + '\n' + responseInterfaceCode + '\n\n';
-}
-
-export function renderTypeDefsForOperation(operation: Operation): string{
-		const options = {indentCharacter: '\t'};
-		const {requestType, responseType} = operation.types;
-		const requestInterfaceCode = renderTypeDef(requestType, operation.operationId + 'Request', options);
-		const responseInterfaceCode = renderTypeDef(responseType, operation.operationId + 'Response', options);
-		return 'export ' + requestInterfaceCode + '\n' + 'export ' + responseInterfaceCode + '\n\n';
-	}
-
 
 export function renderType(node: TypeInfo, options, depth = 1): string {
 		if (node.type === 'object'){
@@ -103,12 +55,4 @@ export function renderType(node: TypeInfo, options, depth = 1): string {
 		}
 
 		return node.type;
-	}
-
-export function generateInterface(node, name, options){
-		return `interface ${name} ${renderType(node, options)}`;
-	}
-
-function renderTypeDef(node, name, options){
-		return `type ${name} = ${renderType(node, options)}`;
 	}

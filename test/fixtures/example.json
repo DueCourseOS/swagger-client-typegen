@@ -14,7 +14,7 @@
     "/simple": {
       "get": {
         "summary": "simple endpoint",
-        "operationId": "getHealthcheck",
+        "operationId": "getSimple",
         "tags": [
           "tagA"
         ],

@@ -48,8 +48,8 @@ export function buildStatementsForClient(client: any, interfaceName): TypeStatem
 	const operations = extractOperationsFromClient(client);
 	const dtoTypes:TypeStatement[][] = _.map(operations, (operation: Operation) => {
 		return [
-			{statement: 'typedef', name: operation.operationId + 'Request', definition: operation.types.requestType},
-			{statement: 'typedef', name: operation.operationId + 'Response', definition: operation.types.responseType}
+			{statement: 'typedef', name: operation.operationId + 'Request', definition: operation.types.requestType, export: true},
+			{statement: 'typedef', name: operation.operationId + 'Response', definition: operation.types.responseType, export: true}
 		] as TypeStatement[];
 	});
 
@@ -76,7 +76,7 @@ export function buildStatementsForClient(client: any, interfaceName): TypeStatem
 				type: 'object', children: apis
 			}
 	}};
-	const clientInterface:TypeStatement = {statement: 'interface', name: interfaceName, definition: clientInterfaceType};
+	const clientInterface:TypeStatement = {statement: 'interface', name: interfaceName, definition: clientInterfaceType, export: true};
 	const clientInterfaceStatements = [[clientInterface]];
 
 	return dtoTypes.concat(clientInterfaceStatements);

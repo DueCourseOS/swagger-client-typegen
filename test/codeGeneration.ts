@@ -109,7 +109,7 @@ describe('code Generation', () => {
 			const target:TypeInfo = {type: 'number'};
 			const typeDef:TypeDefInfo = {statement: 'typedef', name: 'Numberish', definition: target, export: true};
 			const expectedCode = 'export type Numberish = number;'
-			expect(codeGen.renderStatement(typeDef, options)).to.equal(expectedCode);
+			expect(codeGen.renderStatement(typeDef)).to.equal(expectedCode);
 		});
 
 		it('should render interfaces', () => {
@@ -119,7 +119,7 @@ describe('code Generation', () => {
 `export interface SpuriousInterface {
 	n: number;
 }`
-			expect(codeGen.renderStatement(interfaceDef, options)).to.equal(expectedCode);
+			expect(codeGen.renderStatement(interfaceDef)).to.equal(expectedCode);
 		});
 
 	});

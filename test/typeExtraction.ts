@@ -1,7 +1,9 @@
 import {expect} from 'chai';
 import * as swagger from 'swagger-client';
-import {extractOperationsFromClient} from '../src/swaggerTypeExtractor';
+import {buildStatementsForClient} from '../src/swaggerTypeExtractor';
+import {TypeStatement} from '../src/intermediaryRepresentation';
 import {readFileSync} from 'fs';
+import {flatten} from 'lodash';
 
 function loadFixture(name){
 	const fixture = readFileSync(__dirname + `/fixtures/${name}.json`, 'utf8');
@@ -10,26 +12,48 @@ function loadFixture(name){
 
 describe('type extraction', () => {
 	it('should discover the operations', ()=>{
-		return swagger({spec: loadFixture('example')}).then(extractOperationsFromClient).then(operations => {
-      console.log(operations);
-			expect(operations).to.have.lengthOf(1);
-			const operation = operations[0];
-			expect(operation.url).to.equal('/simple');
-			expect(operation.method).to.equal('get');
+		return swagger({spec: loadFixture('example')})
+		.then(client => buildStatementsForClient(client, 'MyClient'))
+		.then((statementGroups:TypeStatement[][]) => {
+			const clientInterface = flatten(statementGroups).filter(statement => statement.name === 'MyClient')[0];
+			expect(clientInterface).to.exist;
 
-      const expectedRequestType = {
-				type: 'object',
-				children: {}
-			};
-			expect(operation.types.requestType).to.deep.equal(expectedRequestType);
-      const expectedResponseType = {
-				type: 'object',
-				children: {
-					body: {type: 'string'},
-					statusCode: {type: 'literal', value: 200}
+			const expectedInterface = {
+				export: true,
+				statement: 'interface',
+				name: 'MyClient',
+				definition: {
+					type: 'object',
+					children: {
+						apis: {
+							type: 'object',
+							children: {
+								tagA: {
+									type: 'object',
+									children: {
+										getSimple: {
+											type: 'function',
+											parameters: [{name:'params', type: {
+												type: 'named',
+												typeName: 'getSimpleRequest'
+											}}],
+											resultType: {
+												type: 'concrete',
+												genericTypeName:'Promise',
+												parameters:[{
+													type: 'named',
+													typeName: 'getSimpleResponse'
+											}]}
+										}
+									}
+								}
+							}
+						}
+					}
 				}
-			};
-			expect(operation.types.responseType).to.deep.equal(expectedResponseType);
+			}
+
+			expect(clientInterface).to.deep.equal(expectedInterface);
 		});
 	})
 })
