@@ -1,15 +1,19 @@
 {
   "name": "swagger-client-typegen",
   "version": "1.0.0",
-  "description": "",
+  "author": "DueCourseOS <opensource@duecourse.com>",
+  "description": "tool for generating typescript types for a swagger client",
   "main": "index.js",
   "scripts": {
     "tsc:compile": "tsc",
     "tsc:watch": "tsc --watch",
     "test": "nyc --reporter=text mocha test/ --recursive --timeout 30000"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:DueCourseOS/swagger-client-typegen.git"
+  },
   "devDependencies": {
     "@types/chai": "^4.0.0",
     "@types/mocha": "^2.2.41",
